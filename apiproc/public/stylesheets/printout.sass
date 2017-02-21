@@ -3,7 +3,7 @@
   @if $times != 1
     $times: $times - 1
     .circle
-      $percent: ( $times / $total) * 45%
+      $percent: ( $times / $total) * 40%
       background: lighten($colour, $percent)
       @include circles_bg($times, $total, $colour)
 
@@ -34,8 +34,8 @@ html *
 
 body
   background: $t-background
-  min-width: 1200px
-  min-height: 1800px
+  width: 1200px
+  height: 1800px
 
 .cf:before,
 .cf:after
