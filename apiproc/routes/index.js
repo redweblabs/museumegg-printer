@@ -1,13 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var path = require('path');
 
 
 var fs = require('fs');
 var pdf = require('html-pdf');
 var options = {
     "height": "6in",
-    "width": "4in"
+    "width": "4in",
+    "base": path.join(__dirname, '../', 'public')
 };
 
 var dataCache = {};
@@ -170,11 +172,12 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/print', function (req, res, next) {
+
+    console.log(path.join('~/', __dirname, '../', 'public'));
     // print selected resource
     res.render('printout', {title: 'Tobi'}, function (err, html) {
         pdf.create(html, options).toFile('./lol.pdf', function (err, res) {
             if (err) return console.log(err);
-            console.log(res); // { filename: '/app/businesscard.pdf' }
         });
         res.send(html);
     });
