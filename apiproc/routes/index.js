@@ -84,32 +84,23 @@ function processAPI(cb, args) {
 
                         // best image filtering
                         var images = item.attributes.multimedia;
-                        var looper = true,
-                            randImg,
-                            imageSize = 'large';
+                        var randImg,
+                            imageSize = 'large',
+                            landscape = false;
 
-                        do {
+                        randImg = images[Math.floor(Math.random() * images.length)];
+
+                        landscape = widthCheck(randImg.processed.large);
+
+                        // only re check once
+                        if (landscape === false) {
                             randImg = images[Math.floor(Math.random() * images.length)];
-                            console.log(randImg.admin.id);
-                            if (randImg.processed.large) {
-                                landscape = widthCheck(randImg.processed.large);
-                                break;
-                            }
-                            if (randImg.processed.medium) {
-                                imageSize = 'medium';
-                                landscape = widthCheck(randImg.processed.medium);
-                                break;
-                            }
-
-                            // if (landscape) {
-                                //looper = false;
-                            // }
-                        } while (true);
+                        }
 
                         var newRes = {
                             name: item.attributes.summary_title,
                             description: item.attributes.description_primary,
-                            image: buildImg(randImg.processed[imageSize])
+                            image: buildImg(randImg.processed.large)
                         };
 
                         // console.log(newRes);
@@ -140,12 +131,34 @@ router.use(function (res, req, next) {
     processAPI(function (req, res, next) {
         next();
     }, [req, res, next]);
-})
+});
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
+
+    // make data
+    dataCache.sort(function () {
+        return 0.5 - Math.random()
+    });
+
+    var top3 = dataCache.slice(0, 3);
+    var inc = 0;
+
+    top3.forEach(function (val) {
+        val.timestamp = inc;
+        val.dwell = Math.floor(Math.random(0, 10) * 10);
+
+        inc++;
+    });
+
+    var printout = {
+        top: top3,
+        featured: dataCache.slice(3, 4)
+    };
+
     // print queue dash
-    res.render('printout', {title: 'I\'m going to be a PDF!!'})
+    // res.render('printout', printout)
+    res.json(printout);
 });
 
 router.post('/print', function (req, res, next) {
