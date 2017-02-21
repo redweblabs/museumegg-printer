@@ -1,7 +1,73 @@
-doctype html
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/printout.css')
-  body
-    h1= title
+extends layout.pug
+
+block styles
+	link(rel="stylesheet" href="/stylesheets/printout.css")
+
+block content
+	mixin circles(times, size)
+			if times !== 1
+				-size = (size / 1.25 )
+				-s = size + "px"
+				-props = { width: s, height: s }
+				.circle(style=props)
+					-times = times - 1
+					+circles(times, size)
+
+	header.moments-header.cf
+		.moments-header__left.pull-left
+			h1.moments-header__title Your Journey
+			p.moments-header__date 21st February 2017
+		.moments-header__right.pull-right
+			img.moments-header__logo(src="https://blog.sciencemuseum.org.uk/wp-content/uploads/2015/11/SM_logo_light.png")
+	section.moments-timeline
+		.moments-timeline__container.cf
+			.moments-timeline__start_date.pull-left
+				p 9:30am
+			.moments-timeline__line.pull-left
+			.moments-timeline__points__container
+				.moments-timeline__pointer
+					.moments-timeline__point.__point--green
+						+circles(6, 300)
+				.moments-timeline__pointer
+					.moments-timeline__point.__point--red
+						+circles(8, 450)
+				.moments-timeline__pointer
+					.moments-timeline__point.__point--yellow
+						+circles(6, 200)
+			.moments-timeline__end_date.pull-right
+				p 3:30pm
+	section.moments-items
+		.moments-items__container.cf
+			.moments-item.moments-item--green
+				.moments-item__container
+					.moments-item__header.__left--overlay
+						img.moments-item__img(src="http://placehold.it/250x200")
+					.moments-item__contents
+						h1.moments-item__title Title
+						p.moments-item__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+			.moments-item.moments-item--red
+				.moments-item__container
+					.moments-item__header.__right--overlay
+						img.moments-item__img(src="http://placehold.it/250x200")
+					.moments-item__contents
+						h1.moments-item__title Title
+						p.moments-item__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+			.moments-item.moments-item--yellow
+				.moments-item__container
+					.moments-item__header.__left--overlay
+						img.moments-item__img(src="http://placehold.it/250x200")
+					.moments-item__contents
+						h1.moments-item__title Title
+						p.moments-item__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+	section.moments-secret
+		.moments-secret__container.cf
+			.moments-secret__header
+				img.moments-secret__img(src="http://placehold.it/250x200")
+			.moments-secret__content
+				h1.moments-secret__title Title
+				p.moments-secret__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+	footer.moments-footer
+		.moments-footer__container
+			h2.moments-footer__text Access your Vist Timeline online at 
+				span.moments-footer__url sc.mu/239xsa

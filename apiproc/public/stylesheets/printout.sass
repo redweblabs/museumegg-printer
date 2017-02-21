@@ -1,3 +1,295 @@
-body
-  padding: 50px
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+// Mixins
+@mixin circles_bg($times, $total, $colour) {
+  @if $times != 1 {
+    $times: $times - 1;
+    .circle {
+      $percent: ( $times / $total) * 45%;
+      background: lighten( $colour, $percent);
+      @include circles_bg( $times, $total, $colour);
+    }
+  }
+}
+
+// Base font family 
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
+$font-family: 'Open Sans', sans-serif;
+
+// Base Colours
+$t-background: #f9fafb;
+$t-primary: #5b8def;
+$t-primary-font: #b2b2b2;
+$t-secondary-font: #a1bffb;
+
+// Item Colours
+$i-green: #5ed45b;
+$i-red: #e85353;
+$i-yellow: #fdce22;
+$i-purple: #949acb;
+$i-pink: #ee558f;
+
+// Components
+$c-timeline-line: #dee8fb;
+$c-item-shadow: #f5f5f6;
+// Base / Utils
+html * {
+  box-sizing: border-box;
+  font-family: $font-family;
+}
+
+body {
+  background: $t-background;
+  min-width: 1200px;
+  min-height: 1800px;
+}
+
+.cf:before,
+.cf:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+
+.cf:after {
+  clear: both;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.moments-header {
+  width: 100%;
+  background: #1F4191;
+  padding: 30px;
+  .moments-header__title {
+    font-weight: bold;
+    font-size: 40px;
+    margin: 0px;
+    color: white;
+  }
+  .moments-header__date {
+    font-size: 25px;
+    margin: 20px 0px 0px 0px;
+    color: $t-secondary-font;
+  }
+  .moments-header__logo {
+    height: 100px;
+  }
+}
+
+.moments-timeline {
+  .moments-timeline__container {
+    margin: 50px 0px;
+    padding: 125px 0px;
+    position: relative;
+  }
+  .moments-timeline__line {
+    width: 100%;
+    height: 2px;
+    background: #e7edf9;
+  }
+  .moments-timeline__start_date,
+  .moments-timeline__end_date {
+    color: $t-secondary-font;
+    font-size: 20px;
+    padding: 0px 30px;
+  }
+  .moments-timeline__points__container {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    max-width: 1024px;
+    height: 250px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: auto;
+  }
+  .moments-timeline__pointer {
+    width: 33.3333%;
+    height: 100%;
+    float: left;
+    position: relative;
+    display: inline-block;
+  }
+  // timeline points
+  .moments-timeline__point {
+    position: absolute;
+    margin: 0px 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    & > .circle {
+      border: solid 5px $t-background;
+    }
+    &.__point--green {
+      @include circles_bg(6, 6, $i-green);
+    }
+    &.__point--red {
+      @include circles_bg(6, 6, $i-red);
+    }
+    &.__point--yellow {
+      @include circles_bg(6, 6, $i-yellow);
+    }
+    &.__point--purple {
+      @include circles_bg(6, 6, $i-purple);
+    }
+    &.__point--pink {
+      @include circles_bg(6, 6, $i-pink);
+    }
+    .circle {
+      margin: auto;
+      position: absolute;
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+}
+
+.moments-items {
+  .moments-items__container {
+    margin: 40px 0px;
+    padding: 0px 15px;
+  }
+  .moments-item {
+    width: 33.333%;
+    float: left;
+    padding: 0px 15px;
+    
+    &.moments-item--green {
+      color: $i-green;
+    }
+    &.moments-item--red {
+      color: $i-red;
+    }
+    &.moments-item--yellow {
+      color: $i-yellow;
+    }
+    
+    .moments-item__container {
+      width: 100%;
+    }
+    
+    .moments-item__header {
+      width: 100%;
+      max-height: 300px;
+      overflow: hidden;
+      position: relative;
+      
+      &::after {
+        position: absolute;
+        content: '';
+        width: 100%; 
+        height: 0;  
+        bottom: 0;
+      }
+      
+      &.__left--overlay::after {
+        border-top: 20px solid transparent;
+        border-bottom: 0px solid transparent; 
+        border-right: 500px solid white;
+        right: 0;
+      }
+      
+      &.__right--overlay::after {
+        border-top: 20px solid transparent;
+        border-bottom: 0px solid transparent; 
+        border-left: 500px solid white;
+        left: 0;
+      }
+      
+      .moments-item__img {
+        width: 100%;
+      }
+      
+    }
+    .moments-item__contents {
+      padding: 0px 25px 10px 25px;
+      background: white;
+      width: 100%;
+      height: 328px;
+      float: left;
+      box-shadow: 0px 5px 0px #f5f5f6;
+      
+      .moments-item__title {
+        margin-top: 20px;
+        font-size: 40px;
+      }
+      
+      .moments-item__text {
+        color: #c7c7c7;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.moments-secret {
+  padding: 20px 30px;
+  position: relative;
+  
+  .moments-secret__container {
+    width: 100%;
+    background: white;
+    box-shadow: 0px 5px 0px #f5f5f6;
+  }
+  
+  .moments-secret__header, .moments-secret__content {
+    float: left;
+  }
+  
+  .moments-secret__header {
+    width: 33.333%;
+    overflow: hidden;
+    font-size: 35px;
+    
+    .moments-secret__img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  
+  .moments-secret__content {
+    width: 66.666%;
+    padding: 0px 25px 25px 25px;
+    
+    .moments-secret__title {
+      color: $t-primary;
+      font-size: 40px;
+    }
+    
+    .moments-secret__text {
+      color: $t-secondary-font;
+      font-size: 18px;
+    }
+  }
+}
+
+.moments-footer {
+  display: block;
+  width: 100%;
+  float: left;
+  margin-top: 50px;
+  padding: 15px 25px;
+  background: #98bbfd;
+  color: white;
+  
+  .moments-footer__text {
+    font-weight: 100;
+    font-size: 25px;
+  }
+  
+  .moments-footer__url {
+    font-weight: bold;
+  }
+}

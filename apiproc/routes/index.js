@@ -161,8 +161,10 @@ router.get('/', function (req, res, next) {
     res.json(printout);
 });
 
-router.post('/print', function (req, res, next) {
-    // print selected resource
+router.get('/print', function (req, res, next) {
+  
+	res.render('printout');
+	
 });
 
 //todo: make post
