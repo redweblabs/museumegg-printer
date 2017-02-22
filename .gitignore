@@ -59,3 +59,5 @@ typings/
 .idea/
 
 apiproc/public/printouts/
+apiproc/config/
+!apiproc/config/.gitkeep

@@ -8,6 +8,25 @@ var printer = require('printer');
 var fs = require('fs');
 var webshot = require('webshot');
 
+var admin = require("firebase-admin");
+
+admin.initializeApp({
+    credential: admin.credential.cert("smhack-159507-firebase-adminsdk-eynor-9cd43f66c5.json"),
+    databaseURL: "https://smhack-159507.firebaseio.com"
+});
+
+var auth = admin.auth();
+
+var db = admin.database();
+
+var data = db.ref();
+
+
+/// printer
+data.limitToLast(1).on("child_added", function(snapshot) {
+    console.log(snapshot.key, snapshot.val());
+});
+
 var dataCache = {};
 
 function printResults(file) {
@@ -177,7 +196,6 @@ router.get('/', function (req, res, next) {
 
 router.get('/print', function (req, res, next) {
 
-    console.log(path.join(__dirname, '../', 'public'));
     // print selected resource
 
     res.render('printout', {title: 'Tobi'}, function (err, html) {
@@ -191,31 +209,11 @@ router.get('/print', function (req, res, next) {
                 height: 1800
             }
         }, function (err) {
-            // screenshot now saved to hello_world.png
             // printResults(printName);
         });
 
         res.send(html);
     });
-});
-
-//todo: make post
-router.get('/dock', function (req, res, next) {
-    // fetch and compare data
-    // res.json(dataCache);
-    var util = require('util');
-
-    console.log(printer.getPrinter('SELPHY-CP1200').name + '":' + util.inspect(printer.getPrinterDriverOptions(printer.getPrinter('SELPHY-CP1200').name).StpBorderless, {
-            colors: true,
-            depth: 10
-        }));
-
-    res.send(200, 'k');
-
-    // run related content
-    // compile and format data for view
-
-    // send compiled view to print queue
 });
 
 module.exports = router;
