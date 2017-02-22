@@ -58,6 +58,6 @@ typings/
 .env
 .idea/
 
-apiproc/public/printouts/
-apiproc/config/
-!apiproc/config/.gitkeep
+public/printouts/
+config/
+!config/.gitkeep
