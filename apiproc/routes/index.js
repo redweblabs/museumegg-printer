@@ -5,59 +5,9 @@ var path = require('path');
 var printer = require('printer');
 var fs = require('fs');
 var webshot = require('webshot');
-
 var admin = require("firebase-admin");
 
-admin.initializeApp({
-    credential: admin.credential.cert(path.join(__dirname, '../', 'config/') + "supersweetcreds.json"),
-    databaseURL: "https://smhack-159507.firebaseio.com"
-});
-
-var auth = admin.auth();
-var db = admin.database();
-var data = db.ref();
-
 var fire = false;
-
-/// printer
-data.limitToLast(1).on("child_added", function(snapshot) {
-    if(fire === true){
-        console.log(snapshot.key, snapshot.val());
-    } else {
-        fire = true;
-    }
-
-    var sample = [
-        {
-            '25571:44527':
-                {
-                    time: 36,
-                    score: 320.83333333333337,
-                    timestamp: 1487702956369,
-                    counter: 36
-                }
-        },
-        {
-            '4681:49931':
-                {
-                    time: 40,
-                    score: 308.33333333333337,
-                    timestamp: 1487702909560,
-                    counter: 40
-                }
-        },
-        {
-            '35635:47204':
-                {
-                    time: 37,
-                    score: 295,
-                    timestamp: 1487702893115,
-                    counter: 37
-                }
-        }
-    ]
-});
-
 var dataCache = {};
 
 function printResults(file) {
@@ -97,7 +47,7 @@ function processAPI(cb, args) {
             if (!error && response.statusCode == 200) {
 
                 var data = JSON.parse(body);
-                var filteredData = data.data.map(function (item) {
+                data.data.forEach(function (item) {
                     if (items.indexOf(item.id) !== -1) {
                         // item primary description
                         item.attributes.description.map(function (i) {
@@ -162,22 +112,12 @@ function processAPI(cb, args) {
                             randImg = images[Math.floor(Math.random() * images.length)];
                         }
 
-                        var newRes = {
+                        dataCache[item.id] = {
                             name: item.attributes.summary_title,
                             description: item.attributes.description_primary,
                             image: buildImg(randImg.processed.large)
                         };
-
-                        // console.log(newRes);
-
-                        return newRes;
-                    } else {
-                        return null;
                     }
-                });
-
-                dataCache = filteredData.filter(function (i) {
-                    return i;
                 });
 
                 if (cb) {
@@ -192,53 +132,67 @@ function processAPI(cb, args) {
     }
 }
 
-router.use(function (res, req, next) {
-    processAPI(function (req, res, next) {
-        next();
-    }, [req, res, next]);
-});
+processAPI();
 
-router.get('/print', function (req, res, next) {
+function dockEgg(eggData, res) {
+    console.log('Egg Docked');
+    // console.log(dataCache);
 
     // print selected resource
 
-		// Normalize the dwell times relative to 100
-	  // Move to separate method / module
-		// i.e. below
-		let dwell_artifacts = [
-			{ dwell: 100, colour: 'jet' },
-			{ dwell: 40, colour: 'pink' },
-			{ dwell: 30, colour: 'blue' }
-		]
+    // Normalize the dwell times relative to 100
+    // Move to separate method / module
+    // i.e. below
+    var dwell_artifacts = [
+        {dwell: 100, colour: 'jet'},
+        {dwell: 40, colour: 'pink'},
+        {dwell: 30, colour: 'blue'}
+    ];
 
-		let total = dwell_artifacts.reduce((t, y) => t + y.dwell, 0);
-		let maxHeight = 500;
+    eggData.forEach(function (val, ind) {
+        console.log(ind);
+        dwell_artifacts[ind].dwell = Math.round(val[Object.keys(val)[0]].score);
+    });
 
-		let normalized_dwell = dwell_artifacts
-			.map((artifact) => {
-				let relative = ( 100 / total ) * artifact.dwell;
-				artifact.dwell = ( maxHeight / 100 ) * relative;
-				return artifact;
-			});
+    console.log(dwell_artifacts);
 
-		let viewModel = {
-			result: {
-				start_time: '9:30am',
-				end_time: '10:30pm',
-				dwell_artifacts: normalized_dwell,
-				artifacts: [
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/350x200', colour: 'jet' },
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/450x200', colour: 'pink' },
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/550x200', colour: 'blue' }
-				],
-				secret: {
-					title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
-				},
-				online_url: 'http://sci.mu/23X12'
-			}
-		};
+    var total = dwell_artifacts.reduce(function (t, y) {
+        return t + y.dwell
+    });
+    var maxHeight = 500;
 
-		// End of Normalization
+    var normalized_dwell = dwell_artifacts
+        .map(function (artifact) {
+            var relative = ( 100 / total ) * artifact.dwell;
+            artifact.dwell = ( maxHeight / 100 ) * relative;
+            return artifact;
+        });
+
+    var artifacts = [];
+
+    eggData.forEach(function (val, ind) {
+        artifacts.push({
+            title: dataCache[Object.keys(val)[0]].name.split(',')[0],
+            description: dataCache[Object.keys(val)[0]].description,
+            image_url: dataCache[Object.keys(val)[0]].image.url,
+            colour: 'blue'
+        });
+    });
+
+    var viewModel = {
+        result: {
+            start_time: 'Start',
+            end_time: 'End',
+            dwell_artifacts: normalized_dwell,
+            artifacts: artifacts,
+            secret: {
+                title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
+            },
+            online_url: 'http://sci.mu/23X12'
+        }
+    };
+
+    // End of Normalization
 
     res.render('printout', viewModel, function (err, html) {
 
@@ -252,10 +206,80 @@ router.get('/print', function (req, res, next) {
             }
         }, function (err) {
             // printResults(printName);
+            res.status(200).send(html);
         });
 
-        res.send(html);
     });
+
+
+}
+
+
+admin.initializeApp({
+    credential: admin.credential.cert(path.join(__dirname, '../', 'config/') + "supersweetcreds.json"),
+    databaseURL: "https://smhack-159507.firebaseio.com"
+});
+
+var auth = admin.auth();
+var db = admin.database();
+var data = db.ref();
+
+
+/// printer
+data.limitToLast(1).on("child_added", function (snapshot) {
+    if (fire === true) {
+
+        var eggData = snapshot.val();
+
+        request.post('http://localhost:3000/', {
+            json: {
+                eggdata: eggData
+            }
+        })
+    } else {
+        fire = true;
+    }
+});
+
+router.get('/test', function (req, res, next) {
+    request.post('http://localhost:3000/', {
+        json: {
+            eggdata: [
+
+                {
+                    'co8421531': {
+                        time: 36,
+                        score: 320.83333333333337,
+                        timestamp: 1487702956369,
+                        counter: 36
+                    }
+                },
+                {
+                    'co8401352': {
+                        time: 40,
+                        score: 308.33333333333337,
+                        timestamp: 1487702909560,
+                        counter: 40
+                    }
+                },
+                {
+                    'co8427213': {
+                        time: 37,
+                        score: 295,
+                        timestamp: 1487702893115,
+                        counter: 37
+                    }
+                }
+            ]
+        }
+    });
+
+    res.status(200).send('<strong>k</strong>');
+});
+
+router.post('/', function (req, res, next) {
+    console.log('post /');
+    dockEgg(req.body.eggdata, res);
 });
 
 module.exports = router;
