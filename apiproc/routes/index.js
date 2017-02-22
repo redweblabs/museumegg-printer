@@ -2,14 +2,12 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var path = require('path');
-/*
 var printer = require('printer');
-*/
 var fs = require('fs');
 var webshot = require('webshot');
 
 var dataCache = {};
-/*
+
 function printResults(file) {
 
     printer.printFile({
@@ -22,7 +20,7 @@ function printResults(file) {
         }
     });
 }
-*/
+
 function processAPI(cb, args) {
 
     var items = [
@@ -184,9 +182,9 @@ router.get('/print', function (req, res, next) {
 	  // Move to separate method / module
 		// i.e. below
 		let dwell_artifacts = [
-			{ dwell: 100, colour: 'green' },
-			{ dwell: 40, colour: 'red' },
-			{ dwell: 30, colour: 'pink' }
+			{ dwell: 100, colour: 'jet' },
+			{ dwell: 40, colour: 'pink' },
+			{ dwell: 30, colour: 'blue' }
 		]
 		
 		let total = dwell_artifacts.reduce((t, y) => t + y.dwell, 0);
@@ -205,9 +203,9 @@ router.get('/print', function (req, res, next) {
 				end_time: '10:30pm',
 				dwell_artifacts: normalized_dwell,
 				artifacts: [
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/350x200', colour: 'green' },
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/450x200', colour: 'red' },
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/550x200', colour: 'pink' }
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/350x200', colour: 'jet' },
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/450x200', colour: 'pink' },
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/550x200', colour: 'blue' }
 				],
 				secret: {
 					title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
