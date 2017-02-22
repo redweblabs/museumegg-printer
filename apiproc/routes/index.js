@@ -36,7 +36,89 @@ function processAPI(cb, args) {
         'co34242'
     ];
 
+
     if (Object.keys(dataCache).length === 0) {
+        request({
+            url: 'http://collection.sciencemuseum.org.uk/objects/co8448547/motorola-microtac-classic-mobile-telephone-1991-2000-mobile-telephone',
+            headers: {
+                accept: 'application/vnd.api+json'
+            },
+            gzip: true
+        }, function (error, response, body) {
+            var data = JSON.parse(body);
+            var item = data.data;
+            console.log(item);
+
+            // item primary description
+            item.attributes.description.map(function (i) {
+                if (i.primary === true) {
+                    item.attributes.description_primary = i.value;
+                }
+
+                return i;
+            });
+
+            function widthCheck(val) {
+                var width = 0;
+                var height = 0;
+                val.measurements.dimensions.forEach(function (dimen) {
+                    if (dimen.dimension.toLowerCase() == 'width') {
+                        width = dimen.value;
+                    } else {
+                        height = dimen.value;
+                    }
+                });
+
+                return width > height;
+            }
+
+            function buildImg(img) {
+                var newImg = {};
+
+                var width = 0;
+                var height = 0;
+                img.measurements.dimensions.forEach(function (dimen) {
+                    if (dimen.dimension.toLowerCase() == 'width') {
+                        width = dimen.value;
+                    } else {
+                        height = dimen.value;
+                    }
+                });
+
+                if (img.location.indexOf('http') !== -1) {
+                    newImg.url = img.location;
+                } else {
+                    newImg.url = 'http://smgco-images.s3.amazonaws.com/media/' + img.location;
+                }
+
+                newImg.width = width;
+                newImg.height = height;
+
+                return newImg;
+            }
+
+            // best image filtering
+            var images = item.attributes.multimedia;
+            var randImg,
+                imageSize = 'large',
+                landscape = false;
+
+            randImg = images[Math.floor(Math.random() * images.length)];
+
+            landscape = widthCheck(randImg.processed.large);
+
+            // only re check once
+            if (landscape === false) {
+                randImg = images[Math.floor(Math.random() * images.length)];
+            }
+
+            secretItem = {
+                name: item.attributes.summary_title,
+                description: item.attributes.description_primary,
+                image: buildImg(randImg.processed.large)
+            };
+        });
+
         request({
             url: 'https://collection.sciencemuseum.org.uk/search?filter%5Bhas_image%5D=true&filter%5Bmuseum%5D=Science%20Museum&filter%5Bgallery%5D=Information%20Age%20Gallery%3A%20Web&page%5Bsize%5D=50&page%5Btype%5D=search',
             headers: {
@@ -45,7 +127,6 @@ function processAPI(cb, args) {
             gzip: true
         }, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-
                 var data = JSON.parse(body);
                 data.data.forEach(function (item) {
                     if (items.indexOf(item.id) !== -1) {
@@ -158,7 +239,7 @@ function dockEgg(eggData, res) {
 
     var total = dwell_artifacts.reduce(function (t, y) {
         return t + y.dwell
-    });
+    }, 0);
     var maxHeight = 500;
 
     var normalized_dwell = dwell_artifacts
@@ -186,7 +267,9 @@ function dockEgg(eggData, res) {
             dwell_artifacts: normalized_dwell,
             artifacts: artifacts,
             secret: {
-                title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
+                title: secretItem.name.split(',')[0],
+                description: secretItem.description,
+                image_url: secretItem.image.url
             },
             online_url: 'http://sci.mu/23X12'
         }
@@ -205,8 +288,8 @@ function dockEgg(eggData, res) {
                 height: 1800
             }
         }, function (err) {
-            // printResults(printName);
-            res.status(200).send(html);
+            printResults(printName);
+            // res.status(200).send(html);
         });
 
     });
@@ -228,7 +311,7 @@ var data = db.ref();
 /// printer
 data.limitToLast(1).on("child_added", function (snapshot) {
     if (fire === true) {
-
+        console.log('LOLOLOL');
         var eggData = snapshot.val();
 
         request.post('http://localhost:3000/', {
