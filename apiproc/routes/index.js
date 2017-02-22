@@ -175,12 +175,7 @@ router.get('/print', function (req, res, next) {
 
     console.log(path.join('~/', __dirname, '../', 'public'));
     // print selected resource
-    res.render('printout', {title: 'Tobi'}, function (err, html) {
-        pdf.create(html, options).toFile('./lol.pdf', function (err, res) {
-            if (err) return console.log(err);
-        });
-        res.send(html);
-    });
+    res.render('printout');
 });
 
 //todo: make post
