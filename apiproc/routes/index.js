@@ -14,12 +14,6 @@ function printResults(file) {
 
     printer.printFile({
         filename: file,
-        options: {
-            StpBorderless: {
-                True: true,
-                False: false
-            }
-        },
         success: function (jobID) {
             console.log("sent to printer with ID: " + jobID);
         },
@@ -185,6 +179,7 @@ router.get('/print', function (req, res, next) {
 
     console.log(path.join(__dirname, '../', 'public'));
     // print selected resource
+
     res.render('printout', {title: 'Tobi'}, function (err, html) {
 
         var printName = path.join(__dirname, '../', 'public/printouts/') + 'print' + Date.now() + '.png';
@@ -197,7 +192,7 @@ router.get('/print', function (req, res, next) {
             }
         }, function (err) {
             // screenshot now saved to hello_world.png
-            printResults(printName);
+            // printResults(printName);
         });
 
         res.send(html);

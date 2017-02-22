@@ -8,13 +8,19 @@
       @include circles_bg($times, $total, $colour)
 
 // Base font family 
+@font-face
+  font-family: 'ScienceMuseum'
+  src: url('../fonts/science_museum.woff')
+
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700')
+
+$title-font-family: 'ScienceMuseum'
 $font-family: 'Open Sans', sans-serif
 
 // Base Colours
 $t-background: #f9fafb
 $t-primary: #5b8def
-$t-primary-font: #b2b2b2
+$t-primary-font: #000
 $t-secondary-font: #a1bffb
 
 // Item Colours
@@ -27,15 +33,20 @@ $i-pink: #ee558f
 // Components
 $c-timeline-line: #dee8fb
 $c-item-shadow: #f5f5f6
+
 // Base / Utils
 html *
   box-sizing: border-box
   font-family: $font-family
 
+h1
+  font-family: $title-font-family
+
 body
   background: $t-background
   width: 1200px
   height: 1800px
+  margin: 0
 
 .cf:before,
 .cf:after
@@ -58,19 +69,56 @@ body
   width: 100%
   background: #1F4191
   padding: 30px
+
+  .moments-header__left
+    width: 80%
+
   .moments-header__title
-    font-weight: bold
-    font-size: 40px
+    font-weight: 100
+    font-size: 30px
     margin: 0px
     color: white
 
-  .moments-header__date
-    font-size: 25px
-    margin: 20px 0px 0px 0px
-    color: $t-secondary-font
+  .moments-header__scimu
+    font-family: $title-font-family
+    font-size: 58px
+    margin: 10px 0px 0px 0px
+    color: white
+    font-weight: bold
+    text-transform: uppercase
+
+  .moments-header__company_logo
+    padding-right: 25px
+    img
+      height: 100px
 
   .moments-header__logo
     height: 100px
+
+  .moments-header__date
+    font-size: 25px
+    color: #a1bffb
+    padding: 0px 30px 0px 10px
+
+    span
+      display: block
+
+    span + span
+      margin-top: 5px
+
+    .date__day
+      font-weight: bold
+      font-size: 35px
+      text-align: center
+
+    .date_month
+      text-align: center
+      text-transform: uppercase
+      font-size: 24px
+
+    .date__year
+      text-align: center
+      font-size: 18px
 
 .moments-timeline
   .moments-timeline__container
@@ -81,12 +129,13 @@ body
   .moments-timeline__line
     width: 100%
     height: 2px
-    background: #e7edf9
+    background: #a1bffb
 
   .moments-timeline__start_date,
   .moments-timeline__end_date
     color: $t-secondary-font
     font-size: 20px
+    font-weight: bold
     padding: 0px 30px
 
   .moments-timeline__points__container
@@ -145,7 +194,7 @@ body
 
 .moments-items
   .moments-items__container
-    margin: 40px 0px
+    margin: 40px 0px 10px
     padding: 0px 15px
 
   .moments-item
@@ -199,15 +248,17 @@ body
       width: 100%
       height: 328px
       float: left
-      box-shadow: 0px 5px 0px #f5f5f6
+      box-shadow: 0px 5px 0px #e4e4e4
 
       .moments-item__title
         margin-top: 20px
-        font-size: 40px
+        font-size: 50px
+        margin-bottom: 0
 
       .moments-item__text
-        color: #c7c7c7
-        font-size: 18px
+        color: #000
+        font-size: 20px
+        margin-top: 10px
 
 .moments-secret
   padding: 20px 30px
@@ -216,7 +267,7 @@ body
   .moments-secret__container
     width: 100%
     background: white
-    box-shadow: 0px 5px 0px #f5f5f6
+    box-shadow: 0px 5px 0px #e4e4e4
 
   .moments-secret__header, .moments-secret__content
     float: left
@@ -236,18 +287,21 @@ body
 
     .moments-secret__title
       color: $t-primary
-      font-size: 40px
+      font-size: 50px
+      margin-bottom: 0
 
     .moments-secret__text
-      color: $t-secondary-font
-      font-size: 18px
+      color: darken($t-primary, 20%)
+      font-size: 20px
+      margin-top: 10px
 
 .moments-footer
   display: block
   width: 100%
   float: left
-  margin-top: 50px
-  padding: 15px 25px
+  margin-top: 20px
+  margin-bottom: 15px
+  padding: 15px 30px
   background: #98bbfd
   color: white
 
