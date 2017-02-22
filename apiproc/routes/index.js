@@ -3,19 +3,30 @@ var router = express.Router();
 var request = require('request');
 var path = require('path');
 
+var printer = require('printer');
 
 var fs = require('fs');
-var pdf = require('html-pdf');
-var options = {
-    "height": "6in",
-    "width": "4in",
-    "base": path.join(__dirname, '../', 'public')
-};
+var webshot = require('webshot');
 
 var dataCache = {};
 
-function printResults() {
+function printResults(file) {
 
+    printer.printFile({
+        filename: file,
+        options: {
+            StpBorderless: {
+                True: true,
+                False: false
+            }
+        },
+        success: function (jobID) {
+            console.log("sent to printer with ID: " + jobID);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
 }
 
 function processAPI(cb, args) {
@@ -167,18 +178,28 @@ router.get('/', function (req, res, next) {
     };
 
     // print queue dash
-    // res.render('printout', printout)
-    res.json(printout);
+    res.render('printout', printout);
 });
 
 router.get('/print', function (req, res, next) {
 
-    console.log(path.join('~/', __dirname, '../', 'public'));
+    console.log(path.join(__dirname, '../', 'public'));
     // print selected resource
     res.render('printout', {title: 'Tobi'}, function (err, html) {
-        pdf.create(html, options).toFile('./lol.pdf', function (err, res) {
-            if (err) return console.log(err);
+
+        var printName = path.join(__dirname, '../', 'public/printouts/') + 'print' + Date.now() + '.png';
+
+        webshot(html, printName, {
+            siteType: 'html',
+            screenSize: {
+                width: 1200,
+                height: 1800
+            }
+        }, function (err) {
+            // screenshot now saved to hello_world.png
+            printResults(printName);
         });
+
         res.send(html);
     });
 });
@@ -186,8 +207,15 @@ router.get('/print', function (req, res, next) {
 //todo: make post
 router.get('/dock', function (req, res, next) {
     // fetch and compare data
-    res.json(dataCache);
+    // res.json(dataCache);
+    var util = require('util');
 
+    console.log(printer.getPrinter('SELPHY-CP1200').name + '":' + util.inspect(printer.getPrinterDriverOptions(printer.getPrinter('SELPHY-CP1200').name).StpBorderless, {
+            colors: true,
+            depth: 10
+        }));
+
+    res.send(200, 'k');
 
     // run related content
     // compile and format data for view
