@@ -2,12 +2,14 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var path = require('path');
+/*
 var printer = require('printer');
+*/
 var fs = require('fs');
 var webshot = require('webshot');
 
 var dataCache = {};
-
+/*
 function printResults(file) {
 
     printer.printFile({
@@ -20,7 +22,7 @@ function printResults(file) {
         }
     });
 }
-
+*/
 function processAPI(cb, args) {
 
     var items = [
@@ -203,9 +205,9 @@ router.get('/print', function (req, res, next) {
 				end_time: '10:30pm',
 				dwell_artifacts: normalized_dwell,
 				artifacts: [
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200', colour: 'green' },
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200', colour: 'red' },
-					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200', colour: 'pink' }
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/350x200', colour: 'green' },
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/450x200', colour: 'red' },
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/550x200', colour: 'pink' }
 				],
 				secret: {
 					title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
