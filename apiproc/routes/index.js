@@ -256,7 +256,7 @@ function dockEgg(eggData, res) {
             title: dataCache[Object.keys(val)[0]].name.split(',')[0],
             description: dataCache[Object.keys(val)[0]].description,
             image_url: dataCache[Object.keys(val)[0]].image.url,
-            colour: 'blue'
+            colour: normalized_dwell[ind].colour
         });
     });
 
