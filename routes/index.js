@@ -213,80 +213,81 @@ function dockEgg(eggData, res) {
 
             console.log('Secret item found');
 
+
+            // print selected resource
+
+            // Normalize the dwell times relative to 100
+            // Move to separate method / module
+            // i.e. below
+            var dwell_artifacts = [
+                {dwell: 100, colour: 'jet'},
+                {dwell: 40, colour: 'pink'},
+                {dwell: 30, colour: 'blue'}
+            ];
+
+            eggData.forEach(function (val, ind) {
+                console.log(ind);
+                dwell_artifacts[ind].dwell = Math.round(val[Object.keys(val)[0]].score);
+            });
+
+            var total = dwell_artifacts.reduce(function (t, y) {
+                return t + y.dwell
+            }, 0);
+            var maxHeight = 500;
+
+            var normalized_dwell = dwell_artifacts
+                .map(function (artifact) {
+                    var relative = ( 100 / total ) * artifact.dwell;
+                    artifact.dwell = ( maxHeight / 100 ) * relative;
+                    return artifact;
+                });
+
+            var artifacts = [];
+
+            eggData.forEach(function (val, ind) {
+                artifacts.push({
+                    title: dataCache[Object.keys(val)[0]].name.split(',')[0],
+                    description: dataCache[Object.keys(val)[0]].description,
+                    image_url: dataCache[Object.keys(val)[0]].image.url,
+                    colour: normalized_dwell[ind].colour
+                });
+            });
+
+            var viewModel = {
+                result: {
+                    start_time: 'Start',
+                    end_time: 'End',
+                    dwell_artifacts: normalized_dwell,
+                    artifacts: artifacts,
+                    secret: {
+                        title: secretItem.name.split(',')[0],
+                        description: secretItem.description,
+                        image_url: secretItem.image.url
+                    },
+                    online_url: 'http://sci.mu/23X12'
+                }
+            };
+
+            // End of Normalization
+
+            res.render('printout', viewModel, function (err, html) {
+                console.log('rendered');
+
+                var printName = path.join(__dirname, '../', 'public/printouts/') + 'print' + Date.now() + '.jpg';
+
+                webshot(html, printName, {
+                    siteType: 'html',
+                    screenSize: {
+                        width: 1200,
+                        height: 1800
+                    }
+                }, function (err) {
+                    console.log('send to printer');
+                    printResults(printName);
+                });
+
+            });
         }
-    });
-
-
-    // print selected resource
-
-    // Normalize the dwell times relative to 100
-    // Move to separate method / module
-    // i.e. below
-    var dwell_artifacts = [
-        {dwell: 100, colour: 'jet'},
-        {dwell: 40, colour: 'pink'},
-        {dwell: 30, colour: 'blue'}
-    ];
-
-    eggData.forEach(function (val, ind) {
-        console.log(ind);
-        dwell_artifacts[ind].dwell = Math.round(val[Object.keys(val)[0]].score);
-    });
-
-    var total = dwell_artifacts.reduce(function (t, y) {
-        return t + y.dwell
-    }, 0);
-    var maxHeight = 500;
-
-    var normalized_dwell = dwell_artifacts
-        .map(function (artifact) {
-            var relative = ( 100 / total ) * artifact.dwell;
-            artifact.dwell = ( maxHeight / 100 ) * relative;
-            return artifact;
-        });
-
-    var artifacts = [];
-
-    eggData.forEach(function (val, ind) {
-        artifacts.push({
-            title: dataCache[Object.keys(val)[0]].name.split(',')[0],
-            description: dataCache[Object.keys(val)[0]].description,
-            image_url: dataCache[Object.keys(val)[0]].image.url,
-            colour: normalized_dwell[ind].colour
-        });
-    });
-
-    var viewModel = {
-        result: {
-            start_time: 'Start',
-            end_time: 'End',
-            dwell_artifacts: normalized_dwell,
-            artifacts: artifacts,
-            secret: {
-                title: secretItem.name.split(',')[0],
-                description: secretItem.description,
-                image_url: secretItem.image.url
-            },
-            online_url: 'http://sci.mu/23X12'
-        }
-    };
-
-    // End of Normalization
-
-    res.render('printout', viewModel, function (err, html) {
-
-        var printName = path.join(__dirname, '../', 'public/printouts/') + 'print' + Date.now() + '.png';
-
-        webshot(html, printName, {
-            siteType: 'html',
-            screenSize: {
-                width: 1200,
-                height: 1800
-            }
-        }, function (err) {
-            printResults(printName);
-        });
-
     });
 
 
@@ -350,7 +351,10 @@ router.get('/test', function (req, res, next) {
 
 // Main router to build view for printing
 router.post('/', function (req, res, next) {
+
     dockEgg(req.body.eggdata, res);
+    res.status(200);
+    res.send('Done!');
 });
 
 module.exports = router;
