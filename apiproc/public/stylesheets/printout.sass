@@ -27,8 +27,11 @@ $t-secondary-font: #a1bffb
 $i-green: #5ed45b
 $i-red: #e85353
 $i-yellow: #fdce22
-$i-purple: #949acb
+$i-purple: #7076a8
 $i-pink: #ee558f
+$i-blue: #2774f0
+$i-orange: #e2591e
+$i-jet: #242b42
 
 // Components
 $c-timeline-line: #dee8fb
@@ -183,6 +186,15 @@ body
     &.__point--pink
       @include circles_bg(6, 6, $i-pink)
 
+    &.__point--blue
+      @include circles_bg(6, 6, $i-blue)
+				
+    &.__point--orange
+      @include circles_bg(6, 6, $i-orange)
+				
+    &.__point--jet
+      @include circles_bg(6, 6, $i-jet)
+				
     .circle
       margin: auto
       position: absolute
@@ -210,6 +222,21 @@ body
 
     &.moments-item--yellow
       color: $i-yellow
+			
+    &.moments-item--purple
+      color: $i-purple
+			
+    &.moments-item--pink
+      color: $i-pink
+			
+    &.moments-item--blue
+      color: $i-blue
+			
+    &.moments-item--orange
+      color: $i-orange
+			
+    &.moments-item--jet 
+      color: $i-jet
 
     .moments-item__container
       width: 100%
@@ -240,7 +267,11 @@ body
         left: 0
 
       .moments-item__img
+        height: 250px
         width: 100%
+        background-repeat: no-repeat
+        background-position: 50% 0px
+        background-size: auto 100%
 
     .moments-item__contents
       padding: 0px 25px 10px 25px
@@ -278,8 +309,11 @@ body
     font-size: 35px
 
     .moments-secret__img
-      height: 100%
-      width: 100%
+      height: 300px
+      width: 360px
+      background-repeat: no-repeat
+      background-position: 50% 0px
+      background-size: auto 100%
 
   .moments-secret__content
     width: 66.666%

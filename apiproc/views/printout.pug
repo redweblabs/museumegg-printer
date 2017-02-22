@@ -41,17 +41,19 @@ block content
 	section.moments-items
 		.moments-items__container.cf
 			each item in result.artifacts
+				- var bg_style = { 'background-image': `url(${item.image_url})` }
 				.moments-item(class="moments-item--" + item.colour)
 					.moments-item__container
 						.moments-item__header.__left--overlay
-							img.moments-item__img(src="http://placehold.it/250x200")
+							.moments-item__img(style=bg_style)
 						.moments-item__contents
 							h1.moments-item__title #{item.title}
 							p.moments-item__text #{item.description}
 	section.moments-secret
 		.moments-secret__container.cf
 			.moments-secret__header
-				img.moments-secret__img(src=result.secret.image_url)
+				- var secret_bg_style = { 'background-image': `url(${result.secret.image_url})` }
+				.moments-secret__img(style=secret_bg_style)
 			.moments-secret__content
 				h1.moments-secret__title #{result.secret.title}
 				p.moments-secret__text #{result.secret.description}
