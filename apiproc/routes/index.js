@@ -340,7 +340,7 @@ router.get('/test', function (req, res, next) {
                 {
                     'co8401352': {
                         time: 40,
-                        score: 308.33333333333337,
+                        score: 78,
                         timestamp: 1487702909560,
                         counter: 40
                     }
@@ -348,7 +348,7 @@ router.get('/test', function (req, res, next) {
                 {
                     'co8427213': {
                         time: 37,
-                        score: 295,
+                        score: 150,
                         timestamp: 1487702893115,
                         counter: 37
                     }
