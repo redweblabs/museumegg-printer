@@ -9,20 +9,53 @@ var webshot = require('webshot');
 var admin = require("firebase-admin");
 
 admin.initializeApp({
-    credential: admin.credential.cert("smhack-159507-firebase-adminsdk-eynor-9cd43f66c5.json"),
+    credential: admin.credential.cert(path.join(__dirname, '../', 'config/') + "supersweetcreds.json"),
     databaseURL: "https://smhack-159507.firebaseio.com"
 });
 
 var auth = admin.auth();
-
 var db = admin.database();
-
 var data = db.ref();
 
+var fire = false;
 
 /// printer
 data.limitToLast(1).on("child_added", function(snapshot) {
-    console.log(snapshot.key, snapshot.val());
+    if(fire === true){
+        console.log(snapshot.key, snapshot.val());
+    } else {
+        fire = true;
+    }
+
+    var sample = [
+        {
+            '25571:44527':
+                {
+                    time: 36,
+                    score: 320.83333333333337,
+                    timestamp: 1487702956369,
+                    counter: 36
+                }
+        },
+        {
+            '4681:49931':
+                {
+                    time: 40,
+                    score: 308.33333333333337,
+                    timestamp: 1487702909560,
+                    counter: 40
+                }
+        },
+        {
+            '35635:47204':
+                {
+                    time: 37,
+                    score: 295,
+                    timestamp: 1487702893115,
+                    counter: 37
+                }
+        }
+    ]
 });
 
 var dataCache = {};
@@ -165,33 +198,6 @@ router.use(function (res, req, next) {
     }, [req, res, next]);
 });
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-
-    // make data
-    dataCache.sort(function () {
-        return 0.5 - Math.random()
-    });
-
-    var top3 = dataCache.slice(0, 3);
-    var inc = 0;
-
-    top3.forEach(function (val) {
-        val.timestamp = inc;
-        val.dwell = Math.floor(Math.random(0, 10) * 10);
-
-        inc++;
-    });
-
-    var printout = {
-        top: top3,
-        featured: dataCache.slice(3, 4)
-    };
-
-    // print queue dash
-    res.render('printout', printout);
-});
-
 router.get('/print', function (req, res, next) {
 
     // print selected resource
@@ -204,17 +210,17 @@ router.get('/print', function (req, res, next) {
 			{ dwell: 40, colour: 'red' },
 			{ dwell: 30, colour: 'pink' }
 		]
-		
+
 		let total = dwell_artifacts.reduce((t, y) => t + y.dwell, 0);
 		let maxHeight = 500;
-		
+
 		let normalized_dwell = dwell_artifacts
 			.map((artifact) => {
 				let relative = ( 100 / total ) * artifact.dwell;
 				artifact.dwell = ( maxHeight / 100 ) * relative;
 				return artifact;
 			});
-		
+
 		let viewModel = {
 			result: {
 				start_time: '9:30am',
@@ -229,11 +235,11 @@ router.get('/print', function (req, res, next) {
 					title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
 				},
 				online_url: 'http://sci.mu/23X12'
-			} 
+			}
 		};
-	
-		// End of Normalization	
-	
+
+		// End of Normalization
+
     res.render('printout', viewModel, function (err, html) {
 
         var printName = path.join(__dirname, '../', 'public/printouts/') + 'print' + Date.now() + '.png';
