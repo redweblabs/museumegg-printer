@@ -2,9 +2,7 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var path = require('path');
-
 var printer = require('printer');
-
 var fs = require('fs');
 var webshot = require('webshot');
 
@@ -180,7 +178,45 @@ router.get('/print', function (req, res, next) {
     console.log(path.join(__dirname, '../', 'public'));
     // print selected resource
 
-    res.render('printout', {title: 'Tobi'}, function (err, html) {
+		// Normalize the dwell times relative to 100
+	  // Move to separate method / module
+		// i.e. below
+		let dwell_artifacts = [
+			{ dwell: 100, colour: 'green' },
+			{ dwell: 40, colour: 'red' },
+			{ dwell: 30, colour: 'pink' }
+		]
+		
+		let total = dwell_artifacts.reduce((t, y) => t + y.dwell, 0);
+		let maxHeight = 500;
+		
+		let normalized_dwell = dwell_artifacts
+			.map((artifact) => {
+				let relative = ( 100 / total ) * artifact.dwell;
+				artifact.dwell = ( maxHeight / 100 ) * relative;
+				return artifact;
+			});
+		
+		let viewModel = {
+			result: {
+				start_time: '9:30am',
+				end_time: '10:30pm',
+				dwell_artifacts: normalized_dwell,
+				artifacts: [
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200', colour: 'green' },
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200', colour: 'red' },
+					{ title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200', colour: 'pink' }
+				],
+				secret: {
+					title: 'Example', description: 'Lorem Ipsum!', image_url: 'http://placehold.it/250x200'
+				},
+				online_url: 'http://sci.mu/23X12'
+			} 
+		};
+	
+		// End of Normalization	
+	
+    res.render('printout', viewModel, function (err, html) {
 
         var printName = path.join(__dirname, '../', 'public/printouts/') + 'print' + Date.now() + '.png';
 

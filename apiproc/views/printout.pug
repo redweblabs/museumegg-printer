@@ -1,7 +1,8 @@
+
 extends layout.pug
 
 block styles
-	link(rel="stylesheet" href="http://localhost:3000/stylesheets/printout.css")
+	link(rel="stylesheet" href="/stylesheets/printout.css")
 
 block content
 	mixin circles(times, size)
@@ -16,7 +17,7 @@ block content
 	header.moments-header.cf
 		.moments-header__left.pull-left
 			.moments-header__company_logo.pull-left
-				img(src="http://localhost:3000/images/MuseumEggLogo.png")
+				img(src="/images/MuseumEggLogo.png")
 			.moments-header__date.pull-left
 				span.date__day 22
 				span.date__month FEB
@@ -28,52 +29,34 @@ block content
 	section.moments-timeline
 		.moments-timeline__container.cf
 			.moments-timeline__start_date.pull-left
-				p 9:30am
+				p #{result.start_time}
 			.moments-timeline__line.pull-left
 			.moments-timeline__points__container
-				.moments-timeline__pointer
-					.moments-timeline__point.__point--green
-						+circles(6, 300)
-				.moments-timeline__pointer
-					.moments-timeline__point.__point--red
-						+circles(8, 450)
-				.moments-timeline__pointer
-					.moments-timeline__point.__point--yellow
-						+circles(6, 200)
+				each moment in result.dwell_artifacts
+					.moments-timeline__pointer
+						.moments-timeline__point(class="__point--" + moment.colour)
+							+circles(6, moment.dwell)
 			.moments-timeline__end_date.pull-right
-				p 3:30pm
+				p #{result.end_time}
 	section.moments-items
 		.moments-items__container.cf
-			.moments-item.moments-item--green
-				.moments-item__container
-					.moments-item__header.__left--overlay
-						img.moments-item__img(src="http://placehold.it/250x200")
-					.moments-item__contents
-						h1.moments-item__title Title
-						p.moments-item__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-			.moments-item.moments-item--red
-				.moments-item__container
-					.moments-item__header.__right--overlay
-						img.moments-item__img(src="http://placehold.it/250x200")
-					.moments-item__contents
-						h1.moments-item__title Title
-						p.moments-item__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-			.moments-item.moments-item--yellow
-				.moments-item__container
-					.moments-item__header.__left--overlay
-						img.moments-item__img(src="http://placehold.it/250x200")
-					.moments-item__contents
-						h1.moments-item__title Title
-						p.moments-item__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+			each item in result.artifacts
+				.moments-item(class="moments-item--" + item.colour)
+					.moments-item__container
+						.moments-item__header.__left--overlay
+							img.moments-item__img(src="http://placehold.it/250x200")
+						.moments-item__contents
+							h1.moments-item__title #{item.title}
+							p.moments-item__text #{item.description}
 	section.moments-secret
 		.moments-secret__container.cf
 			.moments-secret__header
-				img.moments-secret__img(src="http://placehold.it/250x200")
+				img.moments-secret__img(src=result.secret.image_url)
 			.moments-secret__content
-				h1.moments-secret__title Title
-				p.moments-secret__text orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				h1.moments-secret__title #{result.secret.title}
+				p.moments-secret__text #{result.secret.description}
 
 	footer.moments-footer
 		.moments-footer__container
 			h2.moments-footer__text Access your Vist Timeline online at 
-				span.moments-footer__url sc.mu/239xsa
+				span.moments-footer__url #{result.online_url}
