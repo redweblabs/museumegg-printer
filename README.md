@@ -11,8 +11,8 @@ Api and printer processing application made at the Science Museum hack 2017 #SMH
 
 # Associating repos
 
-- [Smhack-dock](https://github.com/bhawkes/smhack-dock)
-- [Pi Beacon Scanner](https://github.com/bhawkes/pi-beacon-scanner)
+- [museumegg-dock](https://github.com/redweblabs/museumegg-dock)
+- [museumegg-pi-beacon-logger](https://github.com/redweblabs/museumegg-pi-beacon-logger)
 
 #Team
 
